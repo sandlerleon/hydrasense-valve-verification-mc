@@ -11,10 +11,10 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import docx_engine as E                      # noqa: E402
 from common import *                         # noqa: E402,F401
 from hydrasense_references import LIB       # noqa: E402
-import content_front, content_a, content_b, content_si      # noqa: E402,F401
+import content_front, content_a, content_b, content_c, content_d, content_si, content_si2, content_si3      # noqa: E402,F401
 
 
-def build(path, blocks, cit, journal=False, line_numbers=True):
+def build(path, blocks, cit, title, journal=False, line_numbers=True):
     doc = E.Doc(cit, journal)
     num = 0
     for b in blocks:
@@ -57,7 +57,7 @@ def build(path, blocks, cit, journal=False, line_numbers=True):
                 par.paragraph_format.left_indent = E.Emu(400 * 635)
                 par.paragraph_format.first_line_indent = E.Emu(-400 * 635)
                 E.add_runs(par, "[%d] %s" % (i, text), 24 if journal else 18)
-    doc.save(path)
+    doc.save(path, title=title)
 
 
 def scan_all(cit):
@@ -76,8 +76,8 @@ if __name__ == "__main__":
     os.makedirs(OUT, exist_ok=True)
     cit = E.Citations(LIB)
     scan_all(cit)
-    build(os.path.join(OUT, "HydraSense_JLPPI_Manuscript.docx"), B, cit, journal=True)
-    build(os.path.join(OUT, "HydraSense_Supplementary_Information.docx"), BS, cit)
+    build(os.path.join(OUT, "HydraSense_JLPPI_Manuscript.docx"), B, cit, TITLE, journal=True)
+    build(os.path.join(OUT, "HydraSense_Supplementary_Information.docx"), BS, cit, "Supplementary Information: " + TITLE)
     skip = ("CRediT", "Declaration", "Funding", "Data and", "Code and", "Competing", "Author contributions", "Availability", "Use of generative")
     words = sum(len(b[1].split()) for b in B if b[0] in ("p", "p0", "num") and not b[1].startswith(skip))
     abstract = [b[1] for b in B if b[0] == "p0"][0]

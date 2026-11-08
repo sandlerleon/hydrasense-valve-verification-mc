@@ -28,8 +28,8 @@ se = lambda p, m: math.sqrt(p * (1 - p) / m)
 nn = R["meta"]["n"]
 d_se = (STEM - FULL) / math.sqrt(se(STEM, nn) ** 2 + se(FULL, nn) ** 2)
 add(("p", fmt("For the 14-valve route (Table @T:resid@, Fig. @F:resid@), existing checks alone leave a probability of <<b>> per transfer that an error escapes. A handwheel turn-count collar reduces it to <<t>>, direct stem sensing to <<s>> and direct sensing with NFC identity to <<f>>, "
-              "a <<r>>-fold reduction. The difference between direct sensing with and without NFC is <<d>> standard errors, so the NFC benefit for residual risk is not resolved here; it appears in prevention (Section 5.5). Absolute values depend on assumed error rates, "
-              "but the ratios depend mainly on detection logic and are therefore more robust; Section 5.7 tests how robust.", b=pc(BASE, 2), t=pc(TURN, 2), s=pc(STEM, 2), f=pc(FULL, 2), r=n(RRF0), d=n(d_se, 1))))
+              "a <<r>>-fold reduction (95% sampling interval <<cl>> to <<ch>>, from 20 independent replications of 150,000 transfers). In the single runs of Table @T:resid@ the difference between direct sensing with and without NFC is <<d>> standard errors and is not resolved; with common random numbers in the replications, NFC lowers the residual risk by <<nf>> (<<nlo>> to <<nhi>>) relative to direct sensing, a small effect that should not be read as establishing the superiority of one architecture and that is small against the input uncertainty of Section 5.7. The NFC benefit appears mainly in prevention (Section 5.5). Absolute values depend on assumed error rates, "
+              "but the ratios depend mainly on detection logic and are therefore more robust; Sections 5.7 and 5.17 test how robust.", b=pc(BASE, 2), t=pc(TURN, 2), s=pc(STEM, 2), f=pc(FULL, 2), r=n(RRF0), d=n(d_se, 1), cl=n(W["ci"]["rrf_full"][0], 1), ch=n(W["ci"]["rrf_full"][2], 1), nf=pc(W["ci"]["stem_minus_full_rel"][1], 0), nlo=pc(W["ci"]["stem_minus_full_rel"][0], 1), nhi=pc(W["ci"]["stem_minus_full_rel"][2], 1))))
 rows = [[nm] + [pc(P_(rk, a), 3) for a in ("baseline", "turns", "stem", "full")] for rk, nm in ROUTE_NAMES]
 add(("table", "Table @T:resid@. Probability per transfer that an error escapes all barriers (%s transfers per cell)." % n(nn), ["Route", "Existing checks", "Turn-count collar", "Direct sensing", "Direct + NFC"], rows, [1.5, 1.2, 1.3, 1.2, 1.2]))
 add(("fig", "orig_fig1_architectures.png", "Fig. @F:resid@. Residual risk by architecture and route length.", 4.6))
@@ -88,7 +88,7 @@ add(("fig", "Fig9_psa.png", "Fig. @F:psa@. Probabilistic sensitivity analysis ov
                             "the line is no reduction. (c) Partial rank correlation of each input with the logarithm of the risk-reduction factor.", 6.4))
 add(("p", fmt("The strongest rank correlations with the risk-reduction factor are the miss rate of the existing barriers (<<c0>>), the sensor calibration bias (<<c1>>), device unavailability (<<c2>>), sensor noise (<<c3>>) and the bypass probability (<<c4>>). The sign has a simple reading: the "
               "more the existing barriers miss, or the more the operators err (<<oe>>), the more the layer adds; the worse the sensing layer performs or the more often it is unavailable or bypassed, the less. Sensor calibration and availability, "
-              "which a design can control, are therefore as important to the benefit as the unknown human error rates that the study cannot control.",
+              "which a design can control, are therefore as important to the benefit as the unknown human error rates that the study cannot control. These draws assume that operators always act on an alarm; Section 5.17 relaxes that assumption, with a much lower median.",
               c0=n(PSA["prcc_rrf"][top[0]], 2), c1=n(PSA["prcc_rrf"][top[1]], 2), c2=n(PSA["prcc_rrf"][top[2]], 2), c3=n(PSA["prcc_rrf"][top[3]], 2), c4=n(PSA["prcc_rrf"][top[4]], 2), oe=n(PSA["prcc_rrf"][PRIOR_IDX["operator error rates (x)"]], 2))))
 assert [nm[i] for i in top[:5]] == ["existing-barrier miss rate (x)", "sensor calibration bias (x)", "device unavailability (x)", "sensor noise (x)", "bypass probability"], [nm[i] for i in top[:5]]
 
@@ -150,47 +150,3 @@ add(("p", fmt("For missed defects, the injected-defect test of Table @T:miss@ ne
               i1=str(80), p1=pc(PIL_MISS[80]["power_at_6"], 0), i2=str(150), p2=pc(PIL_MISS[150]["power_at_6"], 0), lo=n(acc[100]["sd_ratio_lo"], 2), hi=n(acc[100]["sd_ratio_hi"], 2), lo5=n(acc[500]["sd_ratio_lo"], 2), hi5=n(acc[500]["sd_ratio_hi"], 2))))
 add(("table", "Table @T:miss@. Pilot acceptance test for missed defects: injected defects detected or missed (consumer risk 5% at a true miss rate of 15%).", ["Defects injected", "Accept if misses", "Power at a true miss rate of 6%"], rows, [1.5, 1.5, 2.0]))
 
-# ============================================================================================ 6 Discussion
-add(("h1", "6. Discussion"))
-add(("p", fmt("Four findings are useful for specification. First, the headline reduction should be quoted as a distribution, a factor of about <<m>> (plausible range <<lo>> to <<hi>>) rather than the nominal <<r0>>, and as conditional on operators acting on the alarms: at a 90% response the factor is <<r9>>. "
-              "The benefit is therefore a property of the whole layer, sensor plus people plus procedure, and a pilot must measure the response, not only the sensor. Second, an 8% alarm tolerance with two-point calibration at every assignment keeps nuisance alarms near 1% per valve with direct "
-              "sensing and is close to optimal once alarm fatigue is included; end-stop re-zeroing of binary valves is worth specifying because it removes most of the dependence on calibration age; and throttled valves need their own, explicitly derived band. Third, on-site calibration "
-              "quality, availability and bypass policy, not the radio technology, govern performance: they have the largest correlations with the benefit among the inputs a design controls, so spare devices, rapid swap and a prohibition on unrecorded bypass are part of the barrier. "
-              "Fourth, the NFC tap-before-touch check addresses a different problem from the sensors (prevention of wrong-valve actions), and coverage of neighboring valves has a proportional return.",
-              m=n(PSA["rrf"][1], 0), lo=n(PSA["rrf"][0], 0), hi=n(PSA["rrf"][2], 0), r0=n(RRF0, 0), r9=n(G[(0.9, 0.0)]["rrf"], 1))))
-add(("p", "The comparison of the two sensing concepts supports sensing at the stem or indicator where this is mechanically feasible. The turn collar remains attractive where only the handwheel is accessible, but the simulation indicates it needs recalibration at nearly every assignment and a wider tolerance."))
-add(("h2", "6.1 Position relative to layer-of-protection practice"))
-add(("p", "A protection layer is credited in layer-of-protection analysis only when it is independent of the initiating event and of other layers, specific, dependable and auditable [@CCPS2015]. The sensing layer is independent of the operator's report by construction, and its time-stamped record "
-          "is auditable. It is not dependable in the required sense until its availability, accuracy and the response of the people who act on it have been measured; the study shows, in addition, that these are the parameters that decide the benefit. The layer is therefore proposed as an advisory "
-          "barrier whose value is to be demonstrated by a pilot with the acceptance criteria of Section 5.13, and not as a credited independent protection layer or a safety instrumented function."))
-add(("h2", "6.2 Limitations"))
-add(("p", "The study has important limitations. (i) All input probabilities are assumed priors. The probabilistic sensitivity analysis propagates their uncertainty, but the prior ranges are themselves assumptions, and human-error rates, existing-barrier detection and valve behavior at a real facility "
-          "may differ by more than the factors used. (ii) Common cause is represented only by a shared multiplier of the operator error rates; common-cause failures of the sensing layer (a radio outage, a mislabeled tag group, one calibration procedure applied to all devices) are not modeled. "
-          "(iii) The operator-response model is a parametric description with assumed coefficients, not a fitted model, and the optimum tolerance depends on it. (iv) Collateral movement is modeled for the neighbor of a wrong-valve action only, and a covered neighbor is assumed to be detected reliably. "
-          "(v) Detection of out-of-sequence steps is represented by a single probability rather than a full procedure model. (vi) Security, electromagnetic and mechanical failure modes, hazardous-area certification and the installation effort were not simulated. "
-          "(vii) The device concept has not been built or tested, and the battery estimate is analytical. (viii) The literature cited for the human-reliability and incident background was checked for existence and bibliographic data, not read in full for each statement."))
-add(("h2", "6.3 Relation to existing practice and future work"))
-add(("p", "Permanent position transmitters and limit switches provide equivalent information at higher installation cost per valve, and they are the natural choice for valves on critical lines that are operated frequently. The temporary, reassignable layer studied here addresses the complementary case "
-          "of many manual valves that matter only on some routes or during some operations. The next step is the pilot of Section 5.13, which measures sensor accuracy, nuisance alarms, availability, installation time and operator response on a real route, replaces the assumed inputs with data "
-          "and allows the model to be calibrated; the probabilistic sensitivity analysis can then be rerun with posterior distributions."))
-
-# ============================================================================================ 7 Conclusions
-add(("h1", "7. Conclusions"))
-add(("p", fmt("An independent sensing layer on existing manual valves reduces the modeled probability of an undetected misalignment or unauthorized movement per transfer by a factor of <<r0>> on a 14-valve route with the nominal assumed inputs (from <<b>> to <<f>>), and by a median factor of <<m>> (5th to 95th percentile <<lo>> to <<hi>>) when the uncertainty of "
-              "the assumed inputs is propagated. The reduction depends on operators acting on the alarms: it falls to <<r9>> at a 90% response. Direct stem or indicator sensing outperforms handwheel turn counting in false alarms and in robustness to calibration age. Alarm tolerance near 8% of stroke, "
-              "on-site calibration quality with end-stop re-zeroing, spare availability and bypass policy are the main levers, throttled valves need a separate band, and NFC identity checks mainly prevent wrong-valve events. A pilot of about 1000 validated valves with an acceptance number of <<c>> "
-              "nuisance alarms and about 80 to 150 injected defects would replace the assumed inputs with data. The layer cannot be credited as a quantified protection layer before that.",
-              r0=n(RRF0, 0), b=pc(BASE, 2), f=pc(FULL, 2), m=n(PSA["rrf"][1], 0), lo=n(PSA["rrf"][0], 0), hi=n(PSA["rrf"][2], 0), r9=n(G[(0.9, 0.0)]["rrf"], 1), c=str(PIL_FA[1000]["accept_max"]))))
-
-# ============================================================================================ declarations
-add(("h1", "Declaration of competing interest"))
-add(("p0", "The author has prepared a related commercial proposal in response to a public open-innovation challenge concerning real-time verification of manual valve position and may benefit commercially from the concept described. The author has no other competing interests."))
-add(("h1", "Funding"))
-add(("p0", "This research did not receive any specific grant from funding agencies in the public, commercial, or not-for-profit sectors."))
-add(("h1", "CRediT authorship contribution statement"))
-add(("p0", "Leon Sandler: Conceptualization, Methodology, Software, Validation, Formal analysis, Investigation, Visualization, Writing – original draft, Writing – review and editing."))
-add(("h1", "Data availability"))
-add(("p0", "The simulation code, the data behind every figure and table, the automated tests and the manuscript sources (version %s) are archived at https://doi.org/%s (software, all versions) and https://doi.org/%s (manuscript, all versions), and are available at %s. The study uses no field data." % (VERSION, DOIS["code_concept"], DOIS["paper_concept"], GITHUB)))
-add(("h1", "Declaration of generative AI and AI-assisted technologies in the writing process"))
-add(("p0", "During the preparation of this work the author used Claude (Anthropic) to assist with drafting text, writing and testing simulation code and generating figures from that code. After using this tool, the author reviewed and edited the content as needed and takes full responsibility for the content of the publication."))
-add(("refs",))

@@ -63,7 +63,3 @@ rows2 = [[n(r["readings"]), n(r["sd_ratio_lo"], 3), n(r["sd_ratio_hi"], 3)] for 
 adds(("table", "Table S15. 95% interval for the standard deviation of repeated readings, as a multiple of the observed value.", ["Readings", "Lower", "Upper"], rows2, [1.2, 1.2, 1.2]))
 
 # ------------------------------------------------------------------------------------------- S3 reproducibility
-adds(("h1", "S3. Reproducibility"))
-adds(("p", fmt("The repository (%s, version %s) contains the unchanged first-suite model (HydraSense_MC.py), the extended engine and studies (hydrasense_v2.py), the results (results/original_results.json, results/results_v2.json), the figures, the 12 automated tests (tests/test_all.py) and the manuscript sources. "
-               "Commands: python HydraSense_MC.py --reproduce reproduces the first suite; python hydrasense_v2.py --all runs the extended studies (about 4.5 min on one core), python tests/test_all.py runs the tests, python make_schematic.py draws Fig. 1. "
-               "The seed of the extended studies is %s; every study uses fixed seeds, so rerunning reproduces every number in the text. The code needs Python 3, numpy, scipy and matplotlib." % (GITHUB, VERSION, X["seed"]))))

@@ -10,11 +10,12 @@ FIG = os.path.join(ROOT, "figures")
 OUT = os.path.join(ROOT, "manuscript")
 R = json.load(open(os.path.join(ROOT, "results", "original_results.json"), encoding="utf-8"))      # first suite (HydraSense_MC.py), unchanged
 X = json.load(open(os.path.join(ROOT, "results", "results_v2.json"), encoding="utf-8"))            # extended studies (hydrasense_v2.py)
+W = json.load(open(os.path.join(ROOT, "results", "results_v3.json"), encoding="utf-8"))            # studies added in version 1.1.0 (hydrasense_v3.py)
 DOIS = json.load(open(os.path.join(HERE, "dois.json"), encoding="utf-8"))
 GITHUB = "https://github.com/sandlerleon/hydrasense-valve-verification-mc"
-VERSION = "1.0.0"
+VERSION = "1.1.0"
 EMAIL = "sandler.leon@gmail.com"
-TITLE = "Independent Real-Time Verification of Manual Valve Position as an Additional Protection Layer Against Misrouting During Product Transfers: A Monte Carlo Barrier-Effectiveness Assessment"
+TITLE = "Quantifying the Effectiveness of Independent Manual-Valve Verification in Preventing Product-Transfer Risks: A Monte Carlo Process-Safety Assessment"
 
 
 def n(x, d=0):
@@ -33,8 +34,8 @@ def ci(lo, hi, d=1):
     return "%s–%s%%" % (n(100 * lo, d), n(100 * hi, d))
 
 
-FIGNUM = {"arch": 1, "resid": 2, "tol": 3, "age": 4, "avail": 5, "compl": 6, "sens": 7, "psa": 8, "resp": 9, "rez": 10}
-TABNUM = {"arch": 1, "resid": 2, "prior": 3, "psa": 4, "pilot": 5, "miss": 6}
+FIGNUM = {"arch": 1, "resid": 2, "tol": 3, "age": 4, "avail": 5, "compl": 6, "sens": 7, "psa": 8, "resp": 9, "rez": 10, "cc3": 11, "bnd": 12}
+TABNUM = {"arch": 1, "resid": 2, "prior": 3, "psa": 4, "pilot": 5, "miss": 6, "bnd": 7, "cons": 8, "clu": 9, "thr": 10, "claims": 11}
 _TOK = re.compile(r"@([FT]):(\w+)@")
 
 

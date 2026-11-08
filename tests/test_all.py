@@ -113,6 +113,34 @@ def test_packaged_results_reproduced():
     assert lo - 0.004 < ref["p"] < hi + 0.004
 
 
+def test_slip_closed_form_matches_simulation():
+    import hydrasense_v3 as V3
+    r = V3.study_slipcheck(n=1_500_000, seed=3)
+    assert r["lo"] - 3e-4 <= r["closed_form_with_slip"] <= r["hi"] + 3e-4
+    assert abs(r["mc"] - r["closed_form_without_slip"]) > 1e-4          # the slip-free closed form misses the effect
+
+
+def test_independent_analytic_model():
+    sys.path.insert(0, HERE)
+    import independent_check
+    independent_check.main(600_000)
+
+
+def test_sensing_common_cause_direction():
+    P0 = V.Params2()
+    base = V.run2("transfer_14", "full", P0, n=N, seed=23)["any_und"]
+    ign = V.run2("transfer_14", "full", V.Params2(q_gate=0.2), n=N, seed=23)["any_und"]
+    fs = V.run2("transfer_14", "full", V.Params2(q_gate=0.2, cc_bypass=0.0), n=N, seed=23)["any_und"]
+    ident = V.run2("transfer_14", "full", V.Params2(q_id=0.2), n=N, seed=23)["any_und"]
+    assert ign > base and ident > base and fs <= ign
+
+
+def test_time_response_direction():
+    fast = V.run2("transfer_14", "full", V.Params2(rt_mean=1.0), n=N, seed=29)["any_und"]
+    slow = V.run2("transfer_14", "full", V.Params2(rt_mean=10.0), n=N, seed=29)["any_und"]
+    assert slow > 2 * fast
+
+
 if __name__ == "__main__":
     fns = [v for k, v in sorted(globals().items()) if k.startswith("test_") and callable(v)]
     for f in fns:

@@ -3,6 +3,8 @@
 from common import *
 
 G = {(r["resp0"], r["k"]): r for r in RESP["grid"]}
+P2 = W["psa2"]; BD = W["bounds"]["bounds"]; EV = W["eventtree"]; CIR = W["ci"]
+CL = {(r["design"].split(" (")[0], r["rho"]): r for r in W["cluster"]}
 add(("title", TITLE))
 add(("author", "Leon Sandler"))
 add(("small", "Independent Researcher, Northbrook, Illinois, USA"))
@@ -12,21 +14,21 @@ add(("blank",))
 add(("h1", "Highlights"))
 HIGH = [
     "Independent position sensing cuts modeled undetected misrouting %s-fold" % n(RRF0),
-    "Over assumed priors the reduction factor is %s (5th–95th percentile %s–%s)" % (n(PSA["rrf"][1], 1), n(PSA["rrf"][0], 1), n(PSA["rrf"][2])),
-    "Operator response to alarms is the weakest link: 90%% response gives %s-fold" % n(G[(0.9, 0.0)]["rrf"], 1),
-    "An 8% alarm tolerance stays near-optimal once alarm fatigue is included",
-    "Exact binomial acceptance criteria are derived for a pilot of 1000 valves",
+    "With uncertain operator response the median reduction falls to %s-fold" % n(P2["rrf"][1], 1),
+    "A 10-fold reduction needs about %s alarm response and bypass below %s" % (pc(BD["10"]["response_min"], 0), pc(BD["10"]["bypass_max"], 0)),
+    "Fail-safe blocking neutralizes gateway outages; wrong identification erodes benefit",
+    "Pilot power drops from %s to %s when validations cluster by valve" % (pc(CL[("12 valves x 83 validations", 0.0)]["power_at_1p4"], 0), pc(CL[("12 valves x 83 validations", 0.05)]["power_at_1p4"], 0)),
 ]
 for h in HIGH:
     assert len(h) <= 85, (len(h), h)
     add(("bullet", h))
 add(("h1", "Abstract"))
-add(("p0", fmt("Manual valve line-ups before product transfers rely on rounds, radio confirmation and checklists, none of which observes valve position independently. We assess an additional protection layer: temporary, reassignable clamp-on sensors that measure the actual "
-               "position of existing manual valves, identify the operator and report to a plant historian. A Monte Carlo model of the line-up covers skipped, wrong-valve, incomplete and imprecise actions, out-of-sequence steps, unauthorized movement, detection by existing checks, "
-               "and sensor bias, noise, drift, slip, wrong assignment, availability, bypass and operator complacency; it is verified against closed-form results and an automated test suite. With assumed inputs for a 14-valve route, the probability of at least one "
-               "undetected error per transfer fell from <<b>> to <<f>> with direct stem sensing and NFC identity (<<r>>-fold), against <<t>> for handwheel turn counting, which also gave four times more nuisance alarms. A probabilistic sensitivity analysis over the assumed "
-               "priors gave a median risk-reduction factor of <<m>> (5th–95th percentile <<lo>>–<<hi>>), above 5 in <<p5>> of draws; the miss rate of existing barriers, calibration bias and device availability were the main drivers. The factor fell to <<r9>> if operators "
-               "acted on only 90% of true alarms, and an alarm tolerance near 8% of stroke remained best once alarm fatigue was included. Separate tolerances for throttled valves, end-stop re-zeroing and coverage of neighboring valves were quantified, and exact binomial "
-               "acceptance criteria for a pilot were derived. The inputs are assumed, not measured: the results are specification targets, not credited risk reduction.",
-               b=pc(BASE, 2), f=pc(FULL, 2), r=n(RRF0), t=pc(TURN, 2), m=n(PSA["rrf"][1], 1), lo=n(PSA["rrf"][0], 1), hi=n(PSA["rrf"][2]), p5=pc(PSA["P_rrf_gt5"], 0), r9=n(G[(0.9, 0.0)]["rrf"], 1))))
-add(("p0", "Keywords: Manual valve verification; line-up error; human reliability; protection layer; Monte Carlo simulation; probabilistic sensitivity analysis; wireless position sensing"))
+add(("p0", fmt("Manual valve line-ups before product transfers rely on rounds, radio confirmation and checklists, none of which observes valve position independently. We ask when an additional layer of temporary clamp-on position sensors on existing manual valves reduces transfer risk, and when alarm fatigue, bypass, common-cause failures and incomplete coverage remove the benefit. "
+               "A Monte Carlo model of the line-up task, verified against closed-form results, an independent analytic model and automated tests, gave with assumed inputs for a 14-valve route an undetected-error probability per transfer of <<b>> with existing checks and <<f>> with direct sensing and NFC identity (<<r>>-fold; sampling interval <<cl>>–<<ch>>), "
+               "assuming that operators always act on alarms. Varying 13 inputs gave a median reduction of <<m1>> (5th–95th percentile <<l1>>–<<h1>>); adding uncertain operator response, alarm fatigue and common-cause failures of the sensing layer gave <<m2>> (<<l2>>–<<h2>>), with response the strongest driver. "
+               "A mean response time of 10 min against 20 min available gave a factor of about 2. A factor of 10 required a response of at least <<r10>>, bypass below <<b10>> and common-cause probability below <<c10>>. An illustrative event tree gave a <<e>>-fold reduction in expected loss. "
+               "Clustering of validations by valve cut the power of a 1000-validation pilot from <<p0>> to <<p5>>. Inputs, consequence probabilities and losses are assumed: the results are conditional, not credited risk reduction.",
+               b=pc(BASE, 2), f=pc(FULL, 2), r=n(RRF0), cl=n(CIR["rrf_full"][0], 1), ch=n(CIR["rrf_full"][2], 1), m1=n(PSA["rrf"][1], 1), l1=n(PSA["rrf"][0], 1), h1=n(PSA["rrf"][2]), m2=n(P2["rrf"][1], 1), l2=n(P2["rrf"][0], 1), h2=n(P2["rrf"][2], 1),
+               r10=pc(BD["10"]["response_min"], 0), b10=pc(BD["10"]["bypass_max"], 0), c10=pc(BD["10"]["cc_all_max"], 1), e=n(EV["full"]["rrf_eal"], 0),
+               p0=pc(CL[("12 valves x 83 validations", 0.0)]["power_at_1p4"], 0), p5=pc(CL[("12 valves x 83 validations", 0.05)]["power_at_1p4"], 0))))
+add(("p0", "Keywords: Manual valve verification; line-up error; human reliability; protection layer; common-cause failure; alarm response; Monte Carlo simulation; probabilistic sensitivity analysis; event tree"))

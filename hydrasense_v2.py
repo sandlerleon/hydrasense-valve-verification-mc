@@ -44,9 +44,20 @@ class Params2(H.Params):
     rezero: bool = False
     coverage: float = 0.0
     d_coll: float = 0.5
+    cov_realistic: bool = True       # a covered neighbor is detected with the sensor's noise, bias, availability (False: detected with certainty)
+    q_gate: float = 0.0              # common cause of the sensing layer, per validation: gateway outage (all devices unavailable)
+    q_hist: float = 0.0              #   historian / route-validation service failure (validation lost)
+    q_id: float = 0.0                #   systematic wrong valve identification (all assignments shifted by one valve)
+    q_cal: float = 0.0               #   calibration procedure error (shared systematic bias of all devices of the transfer)
+    cal_shared: float = 0.06         #   standard deviation of that shared bias (stroke fraction)
+    cc_bypass: float = -1.0          #   probability that the operator proceeds after such an outage; negative: same as the device bypass probability, 0: fail-safe blocking
+    rt_mean: float = 0.0             # time-dependent response: mean response time to an isolated alarm (min); 0: probability model
+    d_pre: float = 10.0              #   time available before pump start for the pre-transfer alarms (min)
+    d_ev_med: float = 20.0           #   median time available before a consequence develops after a movement during the transfer (min)
+    d_ev_sig: float = 0.7            #   log-standard deviation of that time
 
 
-EXTRA_KEYS = ["fa_mid", "fa_bin", "coll_def", "coll_und", "acted_fail"]
+EXTRA_KEYS = ["fa_mid", "fa_bin", "coll_def", "coll_und", "acted_fail", "ui_lo", "ui_hi"]
 
 
 def run_chunk2(rng, rng2, n, route, arch, P, nominal=False):
@@ -83,17 +94,36 @@ def run_chunk2(rng, rng2, n, route, arch, P, nominal=False):
     err = H.sensor_error(rng, (n, V), arch, ops)
     mis = rng.random((n, V)) < arch.p_assign
     bypass_u = rng.random(n)
+    if sensing and P.q_cal > 0:
+        err = err + np.where(rng2.random(n) < P.q_cal, rng2.normal(0, P.cal_shared, n), 0.0)[:, None]
+    if sensing and P.q_id > 0:
+        mis = mis | (rng2.random(n) < P.q_id)[:, None]
     tol_v = np.where(mid, P.tol if P.tol_mid < 0 else P.tol_mid, P.tol)
     if sensing:
         blocked = dev_bad.any(1)
         bypass = blocked & (bypass_u < P.bypass)
+        if P.q_gate > 0 or P.q_hist > 0:
+            outage = np.zeros(n, bool)
+            if P.q_gate > 0:
+                outage |= rng2.random(n) < P.q_gate
+            if P.q_hist > 0:
+                outage |= rng2.random(n) < P.q_hist
+            ccb = P.bypass if P.cc_bypass < 0 else P.cc_bypass
+            bypass = bypass | (outage & (rng2.random(n) < ccb))
+            blocked = blocked | outage
         meas = np.where(mis, np.roll(actual, 1, axis=1), actual) + err
         flagged = (np.abs(meas - req) > tol_v) & ~bypass[:, None]
     else:
         blocked = np.zeros(n, bool); bypass = np.zeros(n, bool); flagged = np.zeros((n, V), bool)
     fa = flagged & ~true_def
     # operator response to alarms (extra random numbers only when the mechanism is on)
-    if P.resp0 < 1.0 or P.fatigue_k > 0.0:
+    if P.rt_mean > 0.0:
+        m_eff = P.rt_mean * np.exp(P.fatigue_k * fa.sum(1))
+        resp = P.resp0 * (1 - np.exp(-P.d_pre / m_eff))
+        acted = rng2.random((n, V)) < resp[:, None]
+        acted_seq = rng2.random(n) < resp
+        acted_ev = (rng2.exponential(1.0, n) * m_eff < rng2.lognormal(math.log(P.d_ev_med), P.d_ev_sig, n)) & (rng2.random(n) < P.resp0)
+    elif P.resp0 < 1.0 or P.fatigue_k > 0.0:
         resp = P.resp0 * np.exp(-P.fatigue_k * fa.sum(1))
         acted = rng2.random((n, V)) < resp[:, None]
         acted_seq = rng2.random(n) < resp
@@ -125,8 +155,13 @@ def run_chunk2(rng, rng2, n, route, arch, P, nominal=False):
     ex_c = rng2.random((n, V)) < H._det(P.d_coll, P.d_scale, z, sd_d, comp)
     covered = rng2.random((n, V)) < P.coverage
     sensed = covered & sensing & ~bypass[:, None]
+    if P.cov_realistic and P.coverage > 0 and sensing:
+        dcol = rng2.uniform(0.10, 1.0, (n, V))
+        errc = H.sensor_error(rng2, (n, V), arch, ops)
+        sensed = sensed & ~(rng2.random((n, V)) < p_unav) & (np.abs(dcol + errc) > P.tol)
     ac_c = rng2.random((n, V)) < resp[:, None]
     cund = cdef & ~ex_c & ~(sensed & ac_c)
+    lo = actual < req[None, :]
     c = dict(n=n, valves=n * V, pre_def=int(true_def.any(1).sum()), defects=int(true_def.sum()),
              def_flagged=int((true_def & flagged).sum()), und_state_trials=int(und_state.any(1).sum()),
              und_seq=int(und_seq.sum()), und_ev=int(und_ev.sum()), any_und=int(any_und.sum()),
@@ -134,7 +169,7 @@ def run_chunk2(rng, rng2, n, route, arch, P, nominal=False):
              bypass=int(bypass.sum()), collateral=int(wrong.any(1).sum()), events=int(has.sum()),
              ev_any=int(hs_any.sum()), ev_60=int(hs_60.sum()),
              fa_mid=int((fa & mid).sum()), fa_bin=int((fa & ~mid).sum()), coll_def=int(cdef.any(1).sum()), coll_und=int(cund.any(1).sum()),
-             acted_fail=int((flagged & true_def & ~acted).sum()))
+             acted_fail=int((flagged & true_def & ~acted).sum()), ui_lo=int((und_state & lo).sum()), ui_hi=int((und_state & ~lo).sum()))
     return c, any_und
 
 

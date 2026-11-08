@@ -1353,28 +1353,28 @@
   },
   {
    "coverage": 0.25,
-   "full_per_1000": 0.65,
+   "full_per_1000": 0.6533333333333333,
    "baseline_per_1000": 5.07,
    "events_per_1000": 1.38,
    "baseline_events_per_1000": 10.11
   },
   {
    "coverage": 0.5,
-   "full_per_1000": 0.45,
+   "full_per_1000": 0.4533333333333333,
    "baseline_per_1000": 5.07,
    "events_per_1000": 1.38,
    "baseline_events_per_1000": 10.11
   },
   {
    "coverage": 0.75,
-   "full_per_1000": 0.22666666666666666,
+   "full_per_1000": 0.23333333333333334,
    "baseline_per_1000": 5.07,
    "events_per_1000": 1.38,
    "baseline_events_per_1000": 10.11
   },
   {
    "coverage": 1.0,
-   "full_per_1000": 0.01,
+   "full_per_1000": 0.016666666666666666,
    "baseline_per_1000": 5.07,
    "events_per_1000": 1.38,
    "baseline_events_per_1000": 10.11
@@ -1480,5 +1480,5 @@
    }
   ]
  },
- "runtime_s": 274.6
+ "runtime_s": 282.2
 }

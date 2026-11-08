@@ -320,7 +320,10 @@ class Doc:
             par = self.d.add_paragraph(); _spacing(par, 0, 60)
             add_runs(par, "[%d] %s" % (n, text), 18)
 
-    def save(self, path):
+    def save(self, path, title=None):
+        if title is not None:
+            cp = self.d.core_properties
+            cp.title = title; cp.subject = ""; cp.keywords = ""; cp.comments = ""; cp.author = "Leon Sandler"; cp.last_modified_by = "Leon Sandler"
         self.d.save(path)
 
 
