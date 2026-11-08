@@ -1,0 +1,10 @@
+__pycache__/
+*.pyc
+tamprc_out/
+results/results_quick.json
+results/run_v2.log
+results/time_v2.log
+~$*
+results/results_quick_ext.json
+results/run_v3.log
+hydrasense_mc_out/

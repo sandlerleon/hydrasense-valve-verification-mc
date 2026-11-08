@@ -1,0 +1,20 @@
+cff-version: 1.2.0
+message: "If you use this software or the manuscript, please cite them as below."
+title: "HydraSense: Monte Carlo barrier-effectiveness assessment of independent real-time verification of manual valve position (hydrasense-valve-verification-mc)"
+version: "1.0.0"
+date-released: "2026-11-07"
+license: MIT
+repository-code: "https://github.com/sandlerleon/hydrasense-valve-verification-mc"
+doi: "10.5281/zenodo.24046773"
+authors:
+  - family-names: Sandler
+    given-names: Leon
+    orcid: "https://orcid.org/0009-0007-4584-808X"
+    affiliation: "Independent Researcher"
+preferred-citation:
+  type: article
+  title: "Independent Real-Time Verification of Manual Valve Position as an Additional Protection Layer Against Misrouting During Product Transfers: A Monte Carlo Barrier-Effectiveness Assessment"
+  authors:
+    - family-names: Sandler
+      given-names: Leon
+  notes: "Manuscript prepared for the Journal of Loss Prevention in the Process Industries; archived at 10.5281/zenodo.24046771"
