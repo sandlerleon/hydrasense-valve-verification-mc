@@ -1,7 +1,7 @@
 cff-version: 1.2.0
 message: "If you use this software or the manuscript, please cite them as below."
 title: "HydraSense: Monte Carlo process-safety assessment of independent manual-valve verification (hydrasense-valve-verification-mc)"
-version: "1.1.0"
+version: "1.1.1"
 date-released: "2026-11-07"
 license: MIT
 repository-code: "https://github.com/sandlerleon/hydrasense-valve-verification-mc"

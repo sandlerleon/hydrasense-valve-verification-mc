@@ -4,7 +4,7 @@ Leon Sandler, Independent Researcher — sandler.leon@gmail.com — ORCID 0009-0
 
 Code, data and manuscript for a probabilistic assessment of an additional protection layer for manual valve line-ups before product transfers (HydraSense: temporary, reassignable clamp-on position sensors with NFC identity, reporting through WirelessHART to a plant historian), prepared for the **Journal of Loss Prevention in the Process Industries** (Elsevier).
 Manuscript: `manuscript/HydraSense_JLPPI_Manuscript.{docx,pdf}`, supplementary information `manuscript/HydraSense_Supplementary_Information.{docx,pdf}`, cover letter `manuscript/HydraSense_Cover_Letter.{docx,pdf}`.
-Archived on Zenodo (all versions): paper 10.5281/zenodo.24046771, code 10.5281/zenodo.24046773. Version 1.1.0 (this one) revises the study after a pre-submission review; version 1.0.0 (paper 10.5281/zenodo.24046772, code 10.5281/zenodo.24046774) is superseded.
+Archived on Zenodo (all versions): paper 10.5281/zenodo.24046771, code 10.5281/zenodo.24046773. Version 1.1.1 (this one) revises the study after a pre-submission review (1.1.0: new studies; 1.1.1: language edits from a Rubriq check merged selectively); version 1.0.0 (paper 10.5281/zenodo.24046772, code 10.5281/zenodo.24046774) is superseded.
 
 **All input probabilities are assumed design-stage priors, not measurements, and the device has not been built or tested. The results are model probabilities under assumed inputs, not field reliabilities; the layer is an advisory barrier, not a safety instrumented function or a credited protection layer.**
 

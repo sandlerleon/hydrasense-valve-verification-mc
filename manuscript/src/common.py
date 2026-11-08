@@ -13,7 +13,7 @@ X = json.load(open(os.path.join(ROOT, "results", "results_v2.json"), encoding="u
 W = json.load(open(os.path.join(ROOT, "results", "results_v3.json"), encoding="utf-8"))            # studies added in version 1.1.0 (hydrasense_v3.py)
 DOIS = json.load(open(os.path.join(HERE, "dois.json"), encoding="utf-8"))
 GITHUB = "https://github.com/sandlerleon/hydrasense-valve-verification-mc"
-VERSION = "1.1.0"
+VERSION = "1.1.1"
 EMAIL = "sandler.leon@gmail.com"
 TITLE = "Quantifying the Effectiveness of Independent Manual-Valve Verification in Preventing Product-Transfer Risks: A Monte Carlo Process-Safety Assessment"
 

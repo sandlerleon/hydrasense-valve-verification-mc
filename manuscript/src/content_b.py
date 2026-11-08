@@ -38,28 +38,28 @@ add(("p", fmt("Residual risk grows with route length for every architecture, fro
 
 add(("h2", "5.2 Alarm tolerance"))
 st, tu = TOLS["stem"], TOLS["turns"]
-add(("p", fmt("Alarm tolerance controls the trade-off between nuisance alarms and missed defects (Fig. @F:tol@). With direct sensing at a 5% tolerance, false alarms reach <<fa5>> per valve, equivalent to about <<al>> alarms per 14-valve validation, which is unlikely to be acceptable under alarm-management practice, which limits alarm rates to what an operator can handle [@IEC62682]. "
-              "At 8%, false alarms drop to <<fa8>> per valve while <<m8>> of true defects are missed, and these misses concentrate in defects only slightly larger than the 0.10 definition. At 10% the miss rate rises to <<m10>>. For the turn collar at 8%, false alarms are <<tfa>> per valve, "
-              "about four times higher than direct sensing. In the full-layer one-at-a-time analysis, tolerance moved the residual risk from <<lo>> at half the base value to <<hi>> at double, the largest effect of any parameter.",
+add(("p", fmt("Alarm tolerance controls the trade-off between nuisance alarms and missed defects (Fig. @F:tol@). With direct sensing at a 5% tolerance, false alarms reach <<fa5>> per valve, equivalent to approximately <<al>> alarms per 14-valve validation, which is unlikely to be acceptable under alarm-management practice, which limits alarm rates to what an operator can handle [@IEC62682]. "
+              "At 8%, false alarms drop to <<fa8>> per valve while <<m8>> of true defects are missed, and these misses concentrate in defects only slightly larger than the 0.10 definition. At 10% the miss rate increases to <<m10>>. For the turn collar at 8%, false alarms are <<tfa>> per valve, "
+              "approximately four times higher than direct sensing. In the full-layer one-at-a-time analysis, tolerance moved the residual risk from <<lo>> at half the base value to <<hi>> at double, the largest effect of any parameter.",
               fa5=pc(st[0.05][1], 1), al=n(14 * st[0.05][1], 1), fa8=pc(st[0.08][1], 1), m8=pc(st[0.08][2], 1), m10=pc(st[0.1][2], 1), tfa=pc(tu[0.08][1], 1), lo=pc(TOR["alarm tolerance"][0], 2), hi=pc(TOR["alarm tolerance"][1], 2))))
 add(("fig", "orig_fig2_tolerance_tradeoff.png", "Fig. @F:tol@. False alarms versus missed defects as alarm tolerance varies; aged curves assume 60 operations since calibration.", 4.6))
 
 add(("h2", "5.3 Calibration age"))
 so, to = OPS["stem"], OPS["turns"]
 add(("p", fmt("Measurement quality degrades with operations since calibration (Fig. @F:age@). For direct sensing, false alarms rise from <<s1>> per valve at one operation to <<s30>> at 30 and <<s300>> at 300 operations. For the turn collar the corresponding values are <<t1>>, <<t30>> and <<t300>>. "
-              "A turn collar is therefore suitable only for short deployments calibrated at every assignment, whereas direct sensing tolerates about 100 operations between calibrations (<<s100>> false alarms per valve) and supports longer installations.",
+              "A turn collar is therefore suitable only for short deployments calibrated at every assignment, whereas direct sensing tolerates approximately 100 operations between calibrations (<<s100>> false alarms per valve) and supports longer installations.",
               s1=pc(so[1][1], 1), s30=pc(so[30][1], 1), s300=pc(so[300][1], 1), t1=pc(to[1][1], 1), t30=pc(to[30][1], 1), t300=pc(to[300][1], 1), s100=pc(so[100][1], 1))))
 add(("fig", "orig_fig3_calibration_age.png", "Fig. @F:age@. False alarms and missed defects versus operations since calibration.", 4.6))
 
 add(("h2", "5.4 Availability and bypass"))
 b20, b0 = COMM["bypass_20"], COMM["bypass_0"]
 add(("p", fmt("At the base device unavailability, validation is blocked in <<bl>> of transfers on the 14-valve route and bypass occurs in <<by>> (Fig. @F:avail@). If bypass were prohibited, residual risk would fall to <<r0>> regardless of communication quality in the range studied, "
-              "while with 20% bypass it is <<r1>> at the base communication-loss probability of 0.003 and <<r2>> at 0.05. Blocking rises quickly with per-device communication loss, reaching <<b1>> at 0.01. Availability is thus an operational constraint, and bypass policy "
+              "while with 20% bypass it is <<r1>> at the base communication-loss probability of 0.003 and <<r2>> at 0.05. Blocking increases quickly with per-device communication loss, reaching <<b1>> at 0.01. Availability is thus an operational constraint, and bypass policy "
               "determines whether it becomes a safety constraint.", bl=pc(T14["full"]["blocked"]["p"], 1), by=pc(T14["full"]["bypass"]["p"], 1), r0=pc(b0[0.003][2], 2), r1=pc(b20[0.003][2], 2), r2=pc(b20[0.05][2], 2), b1=pc(b20[0.01][1], 0))))
 add(("fig", "orig_fig4_availability_bypass.png", "Fig. @F:avail@. Validation blocked and residual risk versus per-device communication loss, with and without bypass.", 4.6))
 
 add(("h2", "5.5 Operator complacency and identity checks"))
-add(("p", fmt("If operators relax existing checks because a sensing layer is present, residual risk rises from <<c0>> with no complacency to <<c2>> at 20% and <<c8>> at 80% (Fig. @F:compl@), still far below <<b>> for existing checks alone, because the sensors observe independently. "
+add(("p", fmt("If operators relax existing checks because a sensing layer is present, residual risk increases from <<c0>> with no complacency to <<c2>> at 20% and <<c8>> at 80% (Fig. @F:compl@), still far below <<b>> for existing checks alone, because the sensors observe independently. "
               "NFC tap-before-touch addresses a different problem: wrong-valve events, which move a valve that carries no device and are invisible to the sensing layer. At 90% tap compliance, wrong-valve events fall from <<w0>> to <<w9>> per 1000 transfers.",
               c0=pc(COMP[0.0], 3), c2=pc(COMP[0.2], 3), c8=pc(COMP[0.8], 3), b=pc(BASE, 2), w0=n(NFC[0.0], 1), w9=n(NFC[0.9], 1))))
 add(("fig", "orig_fig5_complacency_nfc.png", "Fig. @F:compl@. Residual risk versus complacency (left) and wrong-valve events versus NFC tap compliance (right).", 4.6))
@@ -101,9 +101,9 @@ add(("p", fmt("Making the error rates of a transfer share a lognormal multiplier
 
 # ------------------------------------------------------------------------------------------- 5.9 response and tolerance
 add(("h2", "5.9 Operator response and the choice of tolerance"))
-add(("p", fmt("If operators act on only part of the true alarms the benefit falls quickly (Fig. @F:resp@b gives the effect on the tolerance; the grid is in the Supplementary Information). With a response of 90% to an isolated alarm and no fatigue, the residual risk of the full layer rises from <<a0>> to <<a1>> "
-              "and the risk-reduction factor falls from <<r0>> to <<r1>>; with 80% response and a fatigue coefficient of 0.6 the factor is <<r2>>. A model without a response mechanism assumes a response of 100%; the extended model shows that the first result is the upper end of what a design can claim. "
-              "The response also changes the optimum alarm tolerance. With perfect response, residual risk falls steadily as the tolerance tightens (<<t4>> at 4%), at the price of <<fv4>> nuisance alarms per validation, against <<fv8>> at 8%. With a response of 95% and fatigue coefficients of "
+add(("p", fmt("If operators act on only part of the true alarms the benefit decreases quickly (Fig. @F:resp@b gives the effect on the tolerance; the grid is in the Supplementary Information). With a response of 90% to an isolated alarm and no fatigue, the residual risk of the full layer increases from <<a0>> to <<a1>> "
+              "and the risk-reduction factor decreases from <<r0>> to <<r1>>; with 80% response and a fatigue coefficient of 0.6 the factor is <<r2>>. A model without a response mechanism assumes a response of 100%; the extended model shows that the first result is the upper end of what a design can claim. "
+              "The response also changes the optimum alarm tolerance. With perfect response, residual risk decreases steadily as the tolerance tightens (<<t4>> at 4%), at the price of <<fv4>> nuisance alarms per validation, against <<fv8>> at 8%. With a response of 95% and fatigue coefficients of "
               "0.3 and 0.6, the residual risk has its minimum at a tolerance of <<b1>> of stroke for both coefficients (<<m1>> and <<m2>>), because below it nuisance alarms teach the operator to ignore the true ones and above it defects go unflagged. "
               "The 8% tolerance used in the first version is therefore close to optimal once alarm fatigue is included, but the shallow minimum and the dependence on the assumed response mean that the tolerance should be set by the pilot (Section 5.13).",
               a0=pc(G[(1.0, 0.0)]["full"]["p"], 2), a1=pc(G[(0.9, 0.0)]["full"]["p"], 2), r0=n(G[(1.0, 0.0)]["rrf"], 1), r1=n(G[(0.9, 0.0)]["rrf"], 1), r2=n(G[(0.8, 0.6)]["rrf"], 1),
@@ -131,7 +131,7 @@ add(("p", fmt("Re-zeroing a binary valve each time it reaches an end stop remove
 # ------------------------------------------------------------------------------------------- 5.12 collateral
 add(("h2", "5.12 Coverage of neighboring valves"))
 add(("p", fmt("A wrong-valve action that moves a neighbor without a device is invisible to the layer unless the neighbor is covered. With the NFC tap-before-touch check the layer already cuts the collateral events from <<e0>> to <<e1>> per 1000 transfers, and without any device on the neighbors the undetected events are "
-              "<<u0>> per 1000 (existing checks alone: <<ub>>). The undetected events fall in proportion to the coverage (Fig. @F:rez@c) and almost vanish when every neighbor carries a device (<<u1>>). Coverage of neighbors is therefore a design choice with a quantifiable return, and a partial coverage, "
+              "<<u0>> per 1000 (existing checks alone: <<ub>>). The undetected events decrease in proportion to the coverage (Fig. @F:rez@c) and almost vanish when every neighbor carries a device (<<u1>>). Coverage of neighbors is therefore a design choice with a quantifiable return, and a partial coverage, "
               "for example of the valves adjacent to the route, removes a proportional part.", e0=n(COL[0]["baseline_events_per_1000"], 1), e1=n(COL[0]["events_per_1000"], 1), u0=n(COL[0]["full_per_1000"], 2), ub=n(COL[0]["baseline_per_1000"], 2), u1=n(COL[-1]["full_per_1000"], 2))))
 add(("fig", "Fig11_rezero_pilot_collateral.png", "Fig. @F:rez@. (a) False alarms against operations since calibration with and without end-stop re-zeroing. (b) Pilot sizing for nuisance alarms: power at the modeled rate and risk of accepting an unacceptable rate. "
                                                  "(c) Undetected collateral events against the fraction of neighboring valves that carry a device.", 6.4))
@@ -140,12 +140,12 @@ add(("fig", "Fig11_rezero_pilot_collateral.png", "Fig. @F:rez@. (a) False alarms
 add(("h2", "5.13 Pilot sizing and acceptance criteria"))
 rows = [[n(r["N"]), "≤ %d" % r["accept_max"], pc(r["power_at_1p4"], 0), pc(r["consumer_risk_at_3"], 1), pc(r["upper95_at_expected"], 1)] for r in PIL["fa"]]
 add(("p", fmt("Table @T:pilot@ gives exact binomial acceptance numbers for the nuisance-alarm rate. A pilot of 1000 valves with an acceptance number of <<c>> has a power of <<pw>> at the modeled 1.4% and a risk of <<cr>> of accepting a device whose true rate is 3%; smaller pilots cannot separate the two "
-              "(100 to 200 valves have a power below <<p2>>), and the extra information of more than 2000 valves is small. A pilot on one route therefore needs about 1000 valve validations, which at 14 valves per validation is about 70 transfers, or the same valves validated repeatedly across several routes.",
+              "(100 to 200 valves have a power below <<p2>>), and the extra information of more than 2000 valves is small. A pilot on one route therefore needs approximately 1000 valve validations, which at 14 valves per validation is approximately 70 transfers, or the same valves validated repeatedly across several routes.",
               c=str(PIL_FA[1000]["accept_max"]), pw=pc(PIL_FA[1000]["power_at_1p4"], 0), cr=pc(PIL_FA[1000]["consumer_risk_at_3"], 1), p2=pc(PIL_FA[200]["power_at_1p4"], 0))))
 add(("table", "Table @T:pilot@. Pilot acceptance test for the nuisance-alarm rate: accept if the number of nuisance alarms among the N validated valves is at most the acceptance number (consumer risk 5% at a true rate of 3%).", ["Valves validated N", "Acceptance number", "Power at a true rate of 1.4%", "Risk of accepting a true rate of 3%", "Upper 95% limit if 1.4% is observed"], rows, [1.1, 1.1, 1.4, 1.4, 1.5]))
 rows = [[n(r["injected"]), "≤ %d" % r["accept_max"] if r["accept_max"] >= 0 else "none", pc(r["power_at_6"], 0)] for r in PIL["miss"]]
 acc = {r["readings"]: r for r in PIL["accuracy"]}
-add(("p", fmt("For missed defects, the injected-defect test of Table @T:miss@ needs about <<i1>> deliberately misplaced valves to demonstrate a miss rate below 15% with a power of <<p1>> at the modeled 6% (<<i2>> valves give <<p2>>). The accuracy of the device is shown by repeated readings of a valve held at a known position: "
+add(("p", fmt("For missed defects, the injected-defect test of Table @T:miss@ needs approximately <<i1>> deliberately misplaced valves to demonstrate a miss rate below 15% with a power of <<p1>> at the modeled 6% (<<i2>> valves give <<p2>>). The accuracy of the device is shown by repeated readings of a valve held at a known position: "
               "with 100 readings the 95% interval for the standard deviation is <<lo>> to <<hi>> times the observed value, with 500 readings <<lo5>> to <<hi5>>.",
               i1=str(80), p1=pc(PIL_MISS[80]["power_at_6"], 0), i2=str(150), p2=pc(PIL_MISS[150]["power_at_6"], 0), lo=n(acc[100]["sd_ratio_lo"], 2), hi=n(acc[100]["sd_ratio_hi"], 2), lo5=n(acc[500]["sd_ratio_lo"], 2), hi5=n(acc[500]["sd_ratio_hi"], 2))))
 add(("table", "Table @T:miss@. Pilot acceptance test for missed defects: injected defects detected or missed (consumer risk 5% at a true miss rate of 15%).", ["Defects injected", "Accept if misses", "Power at a true miss rate of 6%"], rows, [1.5, 1.5, 2.0]))
